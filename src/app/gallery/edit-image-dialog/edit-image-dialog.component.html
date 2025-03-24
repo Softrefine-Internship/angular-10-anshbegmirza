@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Edit Image</h2>
+<mat-dialog-content>
+  <form class="edit-form">
+    <mat-form-field appearance="fill">
+      <mat-label>Tags</mat-label>
+      <mat-chip-grid #chipGrid>
+        <mat-chip-row *ngFor="let tag of tags" (removed)="removeTag(tag)">
+          {{ tag }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        <input [matChipInputFor]="chipGrid" (matChipInputTokenEnd)="addTag($event)" placeholder="Add tag...">
+      </mat-chip-grid>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()">
+    Update
+  </button>
+</mat-dialog-actions>

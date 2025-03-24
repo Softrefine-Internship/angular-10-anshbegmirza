@@ -1,20 +1,2 @@
-<h1>File upload</h1>
-
-<!-- File input to select an image -->
-<input type="file" (change)="onFileSelected($event)" />
-
-<!-- Button to trigger the upload -->
-<button type="button" (click)="onUpload()">Upload</button>
-
-<!-- Display the image preview below the upload section -->
-<div *ngIf="imagesToDisplay.length > 0">
-  <h3>Uploaded Image Preview:</h3>
-  <div *ngFor="let image of imagesToDisplay">
-    <img [src]="image" alt="Uploaded Image" style="max-width: 100%; height: auto;" />
-  </div>
-</div>
-
-<!-- Display error message if any -->
-<div *ngIf="error" style="color: red;">
-  <p>Error: {{ error }}</p>
-</div>
+<app-header></app-header>
+<app-display-dialog></app-display-dialog>

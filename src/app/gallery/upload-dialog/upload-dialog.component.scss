@@ -1,0 +1,153 @@
+mat-dialog-content {
+  overflow-x: hidden;
+}
+
+.dialog-content {
+  max-height: 70vh;
+  overflow-y: hidden;
+  padding: 16px;
+}
+
+.upload-container {
+  display: flex;
+  gap: 20px;
+  overflow-x: hidden;
+  min-height: 400px;
+  max-height: 60vh;
+}
+
+.preview-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 300px;
+  max-height: 60vh;
+  position: relative;
+  transition: border-color 0.3s;
+
+  &.dragover {
+    border-color: #3f51b5;
+    background-color: rgba(63, 81, 181, 0.1);
+  }
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  .preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+}
+
+.image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  text-align: center;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+}
+
+.form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.file-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-text {
+  color: #f44336;
+  font-size: 12px;
+}
+
+.error {
+  color: #f44336;
+  margin: 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.progress-bar {
+  margin-bottom: 1rem;
+}
+
+/* Progress Bar Styling */
+.progress-container {
+  margin-top: 20px;
+  width: 100%;
+  border-radius: 4px;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.03);
+
+  .progress-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .upload-icon {
+      margin-right: 8px;
+      color: #3f51b5;
+    }
+
+    .upload-text {
+      font-size: 0.9rem;
+      color: #555;
+    }
+  }
+
+  mat-progress-bar {
+    height: 6px;
+    border-radius: 3px;
+  }
+}
+
+/* Disabled state for upload button */
+button[disabled] {
+  opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .progress-container {
+    padding: 8px;
+
+    .progress-info {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .upload-icon {
+        margin-right: 0;
+        margin-bottom: 4px;
+      }
+    }
+  }
+}

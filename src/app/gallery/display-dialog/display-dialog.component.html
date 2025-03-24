@@ -1,0 +1,62 @@
+<div class="container">
+
+  <!-- Search and Sort Controls -->
+  <div class="controls">
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Tag</mat-label>
+      <input matInput [(ngModel)]="searchTag" (keyup.enter)="searchImages()">
+      <button matSuffix mat-icon-button (click)="searchImages()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Sort By</mat-label>
+      <mat-select [(ngModel)]="sortBy" (selectionChange)="sortImages()">
+        <mat-option value="name">Name</mat-option>
+        <mat-option value="date">Date</mat-option>
+        <mat-option value="size">Size</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Loading spinner -->
+  <div class="spinner-container" *ngIf="isLoading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <!-- Image Cards Grid -->
+  <mat-grid-list cols="3" rowHeight="2:3" gutterSize="20px">
+    <mat-grid-tile *ngFor="let image of filteredImages">
+      <mat-card class="image-card">
+        <!-- Image with overlay buttons -->
+        <div class="image-container">
+          <img mat-card-image [src]="image.base64" [alt]="image.title">
+          <div class="image-overlay">
+            <button mat-mini-fab color="primary" class="action-btn" (click)="editImage(image)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-mini-fab color="warn" class="action-btn" (click)="deleteImage(image)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <mat-card-content>
+          <div class="card-header">
+            <h3 class="card-title">{{ image.title }}</h3>
+            <span class="card-date">{{ image.uploadDate | date: 'mediumDate' }}</span>
+          </div>
+          <p class="card-description">{{ image.description }}</p>
+          <div class="tags">
+            <mat-chip-listbox>
+              <mat-chip *ngFor="let tag of image.tags?.slice(0, 3)" class="tag-chip">
+                {{ tag }}
+              </mat-chip>
+            </mat-chip-listbox>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
