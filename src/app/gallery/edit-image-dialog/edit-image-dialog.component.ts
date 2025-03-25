@@ -1,5 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Image } from 'src/app/shared/image.model';
 
@@ -8,42 +7,50 @@ import { Image } from 'src/app/shared/image.model';
   templateUrl: './edit-image-dialog.component.html',
   styleUrls: ['./edit-image-dialog.component.scss'],
 })
-export class EditImageDialogComponent implements OnInit {
+export class EditImageDialogComponent {
   tags: string[] = [];
+  newTag = '';
+  title: string = '';
+  description: string = '';
 
   constructor(
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<EditImageDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { image: Image }
-  ) {}
+    public dialogRef: MatDialogRef<EditImageDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { image: Image | null }
+  ) {
+    // console.log(data);
 
-  ngOnInit(): void {
-    this.tags = [...this.data.image.tags];
+    // console.log(data.image);
+
+    // Initialize data from image.
+    this.tags = data?.image?.tags ? [...data.image.tags] : [];
+    this.title = data?.image?.title || '';
+    this.description = data?.image?.description || '';
   }
 
-  addTag(event: any): void {
-    const value = (event.value || '').trim();
-    if (value && !this.tags.includes(value)) {
-      this.tags.push(value);
+  addTag(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.key === 'Enter' && this.newTag.trim()) {
+      if (!this.tags.includes(this.newTag.trim())) {
+        this.tags.push(this.newTag.trim());
+        this.newTag = '';
+      }
+      event.preventDefault();
     }
-    event.chipInput!.clear();
   }
 
   removeTag(tag: string): void {
-    const index = this.tags.indexOf(tag);
-    if (index >= 0) {
-      this.tags.splice(index, 1);
-    }
+    this.tags = this.tags.filter((t) => t !== tag);
   }
 
-  onSave(): void {
-    {
-      const updatedImage = {
-        ...this.data.image,
-
-        tags: this.tags,
-      };
-      this.dialogRef.close(updatedImage);
+  saveChanges(): void {
+    if (!this.data.image) {
+      this.dialogRef.close();
+      return;
     }
+
+    this.dialogRef.close({
+      ...this.data.image,
+      tags: this.tags,
+    });
   }
 }

@@ -1,5 +1,4 @@
 <div class="container">
-
   <!-- Search and Sort Controls -->
   <div class="controls">
     <mat-form-field appearance="fill">
@@ -13,11 +12,16 @@
     <mat-form-field appearance="fill">
       <mat-label>Sort By</mat-label>
       <mat-select [(ngModel)]="sortBy" (selectionChange)="sortImages()">
+        <!-- <mat-option value="sort">Sort</mat-option> -->
         <mat-option value="name">Name</mat-option>
         <mat-option value="date">Date</mat-option>
         <mat-option value="size">Size</mat-option>
       </mat-select>
     </mat-form-field>
+
+    <button mat-raised-button color="warn" class="reset-btn" (click)="resetSearch()">
+      Reset
+    </button>
   </div>
 
   <!-- Loading spinner -->
@@ -25,9 +29,9 @@
     <app-loading-spinner></app-loading-spinner>
   </div>
 
-  <!-- Image Cards Grid -->
-  <mat-grid-list cols="3" rowHeight="2:3" gutterSize="20px">
-    <mat-grid-tile *ngFor="let image of filteredImages">
+  <!-- Image Cards Grid - Replaced mat-grid-list with CSS Grid -->
+  <div class="image-grid">
+    <div class="grid-item" *ngFor="let image of filteredImages">
       <mat-card class="image-card">
         <!-- Image with overlay buttons -->
         <div class="image-container">
@@ -44,8 +48,8 @@
 
         <mat-card-content>
           <div class="card-header">
-            <h3 class="card-title">{{ image.title }}</h3>
-            <span class="card-date">{{ image.uploadDate | date: 'mediumDate' }}</span>
+            <h4 class="card-title">{{ image.title }}</h4>
+            <span class="card-date">{{ image.uploadDate | date: 'shortDate' }}</span>
           </div>
           <p class="card-description">{{ image.description }}</p>
           <div class="tags">
@@ -53,10 +57,13 @@
               <mat-chip *ngFor="let tag of image.tags?.slice(0, 3)" class="tag-chip">
                 {{ tag }}
               </mat-chip>
+              <mat-chip *ngIf="image.tags && image.tags.length >3" class="tag-chip">
+                +{{image.tags.length -3}}
+              </mat-chip>
             </mat-chip-listbox>
           </div>
         </mat-card-content>
       </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
+    </div>
+  </div>
 </div>

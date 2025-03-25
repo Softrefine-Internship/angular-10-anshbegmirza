@@ -16,11 +16,13 @@ export class DisplayDialogComponent {
   images: Image[] = [];
   filteredImages: Image[] = [];
   searchTag: string = '';
-  sortBy: string = 'name';
+  sortBy: string = 'sort';
   isLoading = false;
-  constructor(private imageService: ImageService, private dialog: MatDialog) {}
-
   error: string | null = null;
+
+  extraTags: number = 0;
+
+  constructor(private imageService: ImageService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.loadImages();
@@ -31,7 +33,7 @@ export class DisplayDialogComponent {
     this.imageService.getImages().subscribe({
       next: (images) => {
         this.images = images as Image[];
-        console.log(images);
+        // console.log(images);
 
         this.filteredImages = [...this.images];
         this.sortImages();
@@ -50,6 +52,7 @@ export class DisplayDialogComponent {
           this.sortImages();
           this.isLoading = false;
           console.log(this.filteredImages);
+          console.log(this.searchTag);
         },
         error: (err) => console.error('Search error:', err),
       });
@@ -61,12 +64,17 @@ export class DisplayDialogComponent {
 
   resetSearch(): void {
     this.searchTag = '';
+    this.sortBy = 'sort';
     this.filteredImages = [...this.images];
     this.sortImages();
   }
 
   sortImages(): void {
     switch (this.sortBy) {
+      // case 'sort':
+      //   this.filteredImages = [...this.images];
+      //   break;
+
       case 'name':
         this.filteredImages.sort((a, b) => a.title.localeCompare(b.title));
         break;
@@ -107,10 +115,16 @@ export class DisplayDialogComponent {
   }
 
   editImage(image: Image): void {
-    // Implement edit functionality
+    // console.log('Edit image dialog opened', image);
+
     const dialogRef = this.dialog.open(EditImageDialogComponent, {
-      width: '1000px',
-      data: {},
+      width: '450px',
+      data: {
+        image: {
+          ...image,
+          tags: image.tags || null,
+        },
+      },
     });
 
     dialogRef.afterClosed().subscribe((updatedImage) => {
@@ -129,7 +143,7 @@ export class DisplayDialogComponent {
           })
           .catch((error) => {
             this.error = error;
-            console.log(error);
+            // console.log(error);
           });
       }
     });

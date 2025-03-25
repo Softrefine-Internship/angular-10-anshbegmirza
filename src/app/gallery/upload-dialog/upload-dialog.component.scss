@@ -96,18 +96,18 @@ mat-dialog-content {
   width: 100%;
 }
 
-.progress-bar {
-  margin-bottom: 1rem;
-}
+// .progress-bar {
+//   margin-bottom: 1rem;
+// }
 
 /* Progress Bar Styling */
 .progress-container {
-  margin-top: 20px;
+  // margin-top: 20px;
   width: 100%;
   border-radius: 4px;
-  padding: 12px;
+  padding: 0 12px;
   background-color: rgba(0, 0, 0, 0.03);
-
+  // outline: 1px solid lime;
   .progress-info {
     display: flex;
     align-items: center;
@@ -135,7 +135,16 @@ button[disabled] {
   opacity: 0.7;
 }
 
-/* Responsive adjustments */
+/*Responsive design*/
+
+@media (max-width: 720px) {
+  .upload-container {
+    display: block;
+    // flex-direction: column;
+    // gap: 16px;
+  }
+}
+
 @media (max-width: 768px) {
   .progress-container {
     padding: 8px;

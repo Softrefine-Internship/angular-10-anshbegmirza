@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ImageService } from 'src/app/shared/image.service';
-import { NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-upload-dialog',

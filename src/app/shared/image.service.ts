@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { Image } from './image.model';
-
+import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
@@ -19,8 +19,8 @@ export class ImageService {
       .list('imagesCollection')
       .set(imageId, image)
       .then(() => {
-        console.log(imageId, image);
-        console.log('Image stored as base64 string in Realtime Database.');
+        // console.log(imageId, image);
+        // console.log('Image stored as base64 string in Realtime Database.');
       });
   }
 
@@ -30,28 +30,27 @@ export class ImageService {
   }
 
   // searching implementation using tags.
-  searchImagesByTag(tag: string) {
-    return this.db
-      .list('imagesCollection', (ref) =>
-        ref
-          .orderByChild('tags')
-
-          .equalTo(tag)
-      )
-      .valueChanges();
-  }
-
-  // In your ImageService
   // searchImagesByTag(tag: string) {
   //   return this.db
   //     .list('imagesCollection', (ref) =>
   //       ref
   //         .orderByChild('tags')
-  //         .startAt(tag)
-  //         .endAt(tag + '\uf8ff')
+
+  //         .equalTo(tag)
   //     )
   //     .valueChanges();
   // }
+
+  searchImagesByTag(tag: string) {
+    return this.db
+      .list('imagesCollection')
+      .valueChanges()
+      .pipe(
+        map((images: any[]) =>
+          images.filter((image) => image.tags && image.tags.includes(tag))
+        )
+      );
+  }
 
   // delete image
   deleteImage(imageId: string): Promise<void> {
@@ -63,10 +62,10 @@ export class ImageService {
       .object(`imagesCollection/${imageId}`)
       .remove()
       .then(() => {
-        console.log('Image deleted successfully', imageId);
+        // console.log('Image deleted successfully', imageId);
       })
       .catch((error) => {
-        console.log('Error deleting image:', error);
+        // console.log('Error deleting image:', error);
         throw (error: any) => error;
       });
   }

@@ -12,6 +12,7 @@ export class HeaderComponent {
   openUploadDialog() {
     const dialogRef = this.dialog.open(UploadDialogComponent, {
       width: '1000px',
+      height: 'max-content',
       data: {},
     });
 
