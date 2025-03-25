@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ImageService } from 'src/app/shared/image.service';
 import { Image } from 'src/app/shared/image.model';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +12,7 @@ import { EditImageDialogComponent } from '../edit-image-dialog/edit-image-dialog
   templateUrl: './display-dialog.component.html',
   styleUrls: ['./display-dialog.component.scss'],
 })
-export class DisplayDialogComponent {
+export class DisplayDialogComponent implements OnInit {
   images: Image[] = [];
   filteredImages: Image[] = [];
   searchTag: string = '';
@@ -20,7 +20,9 @@ export class DisplayDialogComponent {
   isLoading = false;
   error: string | null = null;
 
-  extraTags: number = 0;
+  searchError: string | null = null;
+
+  private searchDebounceTimer: any = null;
 
   constructor(private imageService: ImageService, private dialog: MatDialog) {}
 
@@ -43,22 +45,41 @@ export class DisplayDialogComponent {
     });
   }
 
+  onSearchInput(): void {
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+    }
+
+    this.searchDebounceTimer = setTimeout(() => {
+      this.searchImages();
+    }, 500);
+  }
+
   searchImages(): void {
     this.isLoading = true;
-    if (this.searchTag) {
+    this.searchError = null;
+    if (this.searchTag.length > 3) {
       this.imageService.searchImagesByTag(this.searchTag).subscribe({
         next: (images) => {
           this.filteredImages = images as Image[];
           this.sortImages();
           this.isLoading = false;
+          if (this.filteredImages.length === 0) {
+            this.searchError = `No images found with tag: ${this.searchTag}`;
+          }
           console.log(this.filteredImages);
           console.log(this.searchTag);
         },
-        error: (err) => console.error('Search error:', err),
+        error: (err) => {
+          console.error('Search error:', err);
+          this.searchError = `No images found with tag: ${this.searchTag}`;
+          this.isLoading = false;
+        },
       });
     } else {
       this.filteredImages = [...this.images];
       this.sortImages();
+      this.isLoading = false;
     }
   }
 
@@ -118,7 +139,7 @@ export class DisplayDialogComponent {
     // console.log('Edit image dialog opened', image);
 
     const dialogRef = this.dialog.open(EditImageDialogComponent, {
-      width: '450px',
+      width: '500px',
       data: {
         image: {
           ...image,

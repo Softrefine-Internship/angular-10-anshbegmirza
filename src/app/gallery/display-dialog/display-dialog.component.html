@@ -3,11 +3,20 @@
   <div class="controls">
     <mat-form-field appearance="fill">
       <mat-label>Search by Tag</mat-label>
-      <input matInput [(ngModel)]="searchTag" (keyup.enter)="searchImages()">
+      <input matInput [(ngModel)]="searchTag" (input)="onSearchInput()" (keyup.enter)="searchImages()">
       <button matSuffix mat-icon-button (click)="searchImages()">
         <mat-icon>search</mat-icon>
       </button>
+      <mat-hint *ngIf="searchTag.length < 4 && searchTag.length > 0" align="end">
+        Enter atleast 4 characters.
+      </mat-hint>
+      <mat-hint *ngIf="searchError" align="start" class="search-error">
+        <mat-icon>error</mat-icon>
+        <span>{{searchError}}</span>
+      </mat-hint>
     </mat-form-field>
+
+
 
     <mat-form-field appearance="fill">
       <mat-label>Sort By</mat-label>

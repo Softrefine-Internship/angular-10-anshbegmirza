@@ -10,6 +10,15 @@ export class ImageService {
 
   error = null;
 
+  convertToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   // upload image to firebase database.
   uploadImage(image: Image): Promise<void> {
     const imageId = this.db.createPushId();
@@ -78,6 +87,9 @@ export class ImageService {
 
     return this.db.object(`imagesCollection/${image.id}`).update({
       tags: image.tags,
+      title: image.title,
+      description: image.description,
+      base64: image.base64,
     });
   }
 }

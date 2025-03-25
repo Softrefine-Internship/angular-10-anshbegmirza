@@ -3,7 +3,7 @@
   <div class="upload-container">
     <!-- Left side: Image preview with drag and drop -->
     <div class="preview-container" [class.dragover]="isDragging" (dragover)="onDragOver($event)"
-      (dragleave)="onDragLeave($event)" (drop)="onFileDrop($event)">
+      (dragleave)="onDragLeave($event)" (drop)="onFileDrop($event)" (click)="fileInput.click()">
       <div *ngIf="base64Image" class="image-preview">
         <img [src]="base64Image" class="preview-image" alt="Image Preview" />
       </div>
@@ -52,9 +52,9 @@
           </mat-chip>
           <input matInput [(ngModel)]="newTag" (keydown.enter)="addTag($event)" placeholder="Add tag" />
         </mat-chip-listbox>
-        <mat-hint>Press Enter to add a tag (minimum 3 required)</mat-hint>
-        <mat-error *ngIf="tags.length < 3 && (formSubmitted || tagsTouched)">
-          At least 3 tags are required
+        <mat-hint>Press Enter to add a tag (minimum 1 required)</mat-hint>
+        <mat-error *ngIf="tags.length < 1 && (formSubmitted || tagsTouched)">
+          At least 1 tag is required
         </mat-error>
       </mat-form-field>
 

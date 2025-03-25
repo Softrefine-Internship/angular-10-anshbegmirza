@@ -1,34 +1,62 @@
 <div class="dialog-container">
   <h2 mat-dialog-title>
     <mat-icon>edit</mat-icon>
-    Tagging
+    {{ data.image ? 'Edit Image' : 'Upload Image' }}
   </h2>
 
   <mat-dialog-content>
-    <div class="tags-section">
-      <mat-label>{{title}}</mat-label>
-      <mat-label>{{description}}</mat-label>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Add Tags</mat-label>
-        <input matInput [(ngModel)]="newTag" (keydown.enter)="addTag($event)" placeholder="Type and press Enter">
-      </mat-form-field>
-
-      <div class="tags-list">
-        <mat-chip *ngFor="let tag of tags" (removed)="removeTag(tag)">
-          {{ tag }}
-          <button matChipRemove>
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-chip>
+    <div class="preview-container" [class.dragover]="isDragging" (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)" (drop)="onFileDrop($event)" (click)="fileInput.click()">
+      <div *ngIf="base64Image" class="image-preview">
+        <img [src]="base64Image" class="preview-image" alt="Image Preview" />
+      </div>
+      <div *ngIf="!base64Image && data.image?.url" class="image-preview">
+        <img [src]="data.image?.base64" class="preview-image" alt="Current Image" />
+      </div>
+      <div *ngIf="!base64Image && !data.image?.url" class="image-placeholder">
+        <mat-icon>cloud_upload</mat-icon>
+        <p>Drag & drop an image here or click to browse</p>
       </div>
     </div>
+
+    <input #fileInput type="file" accept="image/*" hidden (change)="onFileSelected($event)" />
+
+    <div class="form-fields">
+      <mat-form-field appearance="outline">
+        <mat-label>Title</mat-label>
+        <input matInput [(ngModel)]="title" placeholder="Enter image title">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput [(ngModel)]="description" placeholder="Enter image description" rows="3"></textarea>
+      </mat-form-field>
+
+      <div class="tags-section">
+        <mat-form-field appearance="outline">
+          <mat-label>Add Tags</mat-label>
+          <input matInput [(ngModel)]="newTag" (keydown.enter)="addTag($event)" placeholder="Type and press Enter">
+        </mat-form-field>
+
+        <div class="tags-list">
+          <mat-chip *ngFor="let tag of tags" (removed)="removeTag(tag)">
+            {{ tag }}
+            <button matChipRemove>
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-chip>
+        </div>
+      </div>
+    </div>
+
+    <mat-error *ngIf="error" class="error-message">{{error}}</mat-error>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-raised-button color="primary" (click)="saveChanges()">
-      Update
-    </button>
     <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="uploading">
+      <span *ngIf="!uploading">{{ data.image ? 'Update' : 'Upload' }}</span>
+      <mat-spinner *ngIf="uploading" diameter="20"></mat-spinner>
+    </button>
   </mat-dialog-actions>
 </div>

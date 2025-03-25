@@ -49,29 +49,15 @@ export class UploadDialogComponent {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      // 5MB limit
-      this.error = 'Image size must be less than 5MB';
-      return;
-    }
-
     this.selectedFile = file;
     try {
-      this.base64Image = await this.convertToBase64(file);
+      // this.base64Image = await this.convertToBase64(file);
+      this.base64Image = await this.imageService.convertToBase64(file);
       this.error = null;
     } catch (error) {
       this.error = 'Error processing image';
       console.error(error);
     }
-  }
-
-  convertToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
   }
 
   addTag(event: Event): void {
@@ -99,9 +85,9 @@ export class UploadDialogComponent {
     if (
       !this.imageData.title ||
       !this.imageData.description ||
-      this.tags.length < 3
+      this.tags.length < 1
     ) {
-      this.error = 'Please add atleast 3 tags, title and description';
+      this.error = 'Please add atleast 1 tag, title and description';
       return; // Angular forms will show validation messages
     }
 
