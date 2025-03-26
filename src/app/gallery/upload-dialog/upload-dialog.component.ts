@@ -1,6 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Inject, Optional } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ImageService } from 'src/app/shared/image.service';
+
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatBottomSheetRef,
+  MAT_BOTTOM_SHEET_DATA,
+} from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'app-upload-dialog',
@@ -19,6 +25,8 @@ export class UploadDialogComponent {
   formSubmitted = false;
   tagsTouched = false;
 
+  isBottomSheet = false;
+
   imageData = {
     title: '',
     description: '',
@@ -32,8 +40,15 @@ export class UploadDialogComponent {
 
   constructor(
     private imageService: ImageService,
-    private dialogRef: MatDialogRef<UploadDialogComponent>
-  ) {}
+
+    @Optional() public dialogRef: MatDialogRef<UploadDialogComponent>,
+    @Optional()
+    private bottomSheetRef: MatBottomSheetRef<UploadDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) @Optional() dialogData: any,
+    @Inject(MAT_BOTTOM_SHEET_DATA) @Optional() bottomSheetData: any
+  ) {
+    this.isBottomSheet = !!bottomSheetRef;
+  }
 
   async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -88,7 +103,7 @@ export class UploadDialogComponent {
       this.tags.length < 1
     ) {
       this.error = 'Please add atleast 1 tag, title and description';
-      return; // Angular forms will show validation messages
+      return;
     }
 
     if (this.selectedFile && this.base64Image) {
@@ -97,15 +112,18 @@ export class UploadDialogComponent {
       this.imageData.uploadDate = Date.now();
       this.imageData.size = this.selectedFile.size;
       this.imageData.base64 = this.base64Image;
-
       this.imageService
         .uploadImage(this.imageData)
         .then(() => {
           this.uploading = false;
-          this.dialogRef.close({
+
+          const result = {
             success: true,
             message: 'Image uploaded successfully!',
-          });
+          };
+          this.isBottomSheet
+            ? this.bottomSheetRef.dismiss(result)
+            : this.dialogRef.close(result);
         })
         .catch((err) => {
           this.uploading = false;
@@ -115,7 +133,7 @@ export class UploadDialogComponent {
   }
 
   onCancel(): void {
-    this.dialogRef.close();
+    this.isBottomSheet ? this.bottomSheetRef.dismiss() : this.dialogRef.close();
   }
 
   // Drag-and-drop methods

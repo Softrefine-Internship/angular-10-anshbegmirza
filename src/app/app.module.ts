@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,6 +31,7 @@ import { ConfirmDialogComponent } from './gallery/confirm-dialog/confirm-dialog.
 import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
 import { EditImageDialogComponent } from './gallery/edit-image-dialog/edit-image-dialog.component';
 
+import { DialogHelperService } from './shared/dialog-helper.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,14 +56,14 @@ import { EditImageDialogComponent } from './gallery/edit-image-dialog/edit-image
     MatGridListModule,
     MatSelectModule,
     MatProgressSpinnerModule,
-
+    MatBottomSheetModule,
     MatProgressBarModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireStorageModule,
     AngularFireDatabaseModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [DialogHelperService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

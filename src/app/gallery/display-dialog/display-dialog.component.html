@@ -7,16 +7,7 @@
       <button matSuffix mat-icon-button (click)="searchImages()">
         <mat-icon>search</mat-icon>
       </button>
-      <mat-hint *ngIf="searchTag.length < 4 && searchTag.length > 0" align="end">
-        Enter atleast 4 characters.
-      </mat-hint>
-      <mat-hint *ngIf="searchError" align="start" class="search-error">
-        <mat-icon>error</mat-icon>
-        <span>{{searchError}}</span>
-      </mat-hint>
     </mat-form-field>
-
-
 
     <mat-form-field appearance="fill">
       <mat-label>Sort By</mat-label>
@@ -38,7 +29,13 @@
     <app-loading-spinner></app-loading-spinner>
   </div>
 
-  <!-- Image Cards Grid - Replaced mat-grid-list with CSS Grid -->
+  <!-- Search error -->
+  <div *ngIf="searchError" class="search-error">
+    <mat-icon>error</mat-icon>
+    <span>{{searchError}}</span>
+  </div>
+
+  <!-- Image Cards Grid  -->
   <div class="image-grid">
     <div class="grid-item" *ngFor="let image of filteredImages">
       <mat-card class="image-card">

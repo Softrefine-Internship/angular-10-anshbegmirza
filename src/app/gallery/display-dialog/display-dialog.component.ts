@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
 import { ImageService } from 'src/app/shared/image.service';
 import { Image } from 'src/app/shared/image.model';
 import { MatDialog } from '@angular/material/dialog';
 
-import { ConfirmDialogComponent } from './../confirm-dialog/confirm-dialog.component';
+import { DialogHelperService } from 'src/app/shared/dialog-helper.service';
 
-import { EditImageDialogComponent } from '../edit-image-dialog/edit-image-dialog.component';
-
+import { take } from 'rxjs';
+@Injectable({
+  providedIn: 'root',
+})
 @Component({
   selector: 'app-display-dialog',
   templateUrl: './display-dialog.component.html',
@@ -24,14 +26,19 @@ export class DisplayDialogComponent implements OnInit {
 
   private searchDebounceTimer: any = null;
 
-  constructor(private imageService: ImageService, private dialog: MatDialog) {}
+  constructor(
+    private imageService: ImageService,
+    private dialog: MatDialog,
+    private dialogHelper: DialogHelperService
+  ) {}
 
   ngOnInit(): void {
     this.loadImages();
   }
 
-  private loadImages(): void {
+  loadImages(): void {
     this.isLoading = true;
+    this.resetSearch();
     this.imageService.getImages().subscribe({
       next: (images) => {
         this.images = images as Image[];
@@ -56,26 +63,28 @@ export class DisplayDialogComponent implements OnInit {
   }
 
   searchImages(): void {
+    // console.log('Searching...');
     this.isLoading = true;
     this.searchError = null;
-    if (this.searchTag.length > 3) {
-      this.imageService.searchImagesByTag(this.searchTag).subscribe({
-        next: (images) => {
-          this.filteredImages = images as Image[];
-          this.sortImages();
-          this.isLoading = false;
-          if (this.filteredImages.length === 0) {
-            this.searchError = `No images found with tag: ${this.searchTag}`;
-          }
-          console.log(this.filteredImages);
-          console.log(this.searchTag);
-        },
-        error: (err) => {
-          console.error('Search error:', err);
-          this.searchError = `No images found with tag: ${this.searchTag}`;
-          this.isLoading = false;
-        },
-      });
+
+    if (!this.images.length) {
+      this.searchError = 'Images not loaded yet.';
+      this.isLoading = false;
+      return;
+    }
+
+    const trimmedTag = this.searchTag.trim();
+
+    if (trimmedTag.length > 0) {
+      this.filteredImages = this.searchImagesByTag(trimmedTag.toLowerCase());
+      this.isLoading = false;
+      // console.log(this.filteredImages);
+
+      if (this.filteredImages.length === 0) {
+        // console.log(`No images found with tag: ${this.searchTag}`);
+
+        this.searchError = `No images found with tag: ${this.searchTag}`;
+      }
     } else {
       this.filteredImages = [...this.images];
       this.sortImages();
@@ -83,11 +92,20 @@ export class DisplayDialogComponent implements OnInit {
     }
   }
 
+  searchImagesByTag(tag: string) {
+    return this.images.filter(
+      (image) => image.tags && image.tags.includes(tag)
+    );
+  }
+
   resetSearch(): void {
     this.searchTag = '';
     this.sortBy = 'sort';
     this.filteredImages = [...this.images];
     this.sortImages();
+    if ((this.searchError && this.searchTag === null) || undefined) {
+      this.loadImages();
+    }
   }
 
   sortImages(): void {
@@ -110,16 +128,14 @@ export class DisplayDialogComponent implements OnInit {
 
   deleteImage(image: Image): void {
     if (!image?.id) {
-      console.log('No image ID provided.');
+      // console.log('No image ID provided.');
       this.error = `No image ID provided.`;
       return;
     }
 
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { message: image.title },
-    });
+    const dialogRef = this.dialogHelper.openConfirmDialog('this image');
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.subscribe((result) => {
       if (result) {
         // this.uploading = true;
         this.imageService
@@ -129,26 +145,20 @@ export class DisplayDialogComponent implements OnInit {
           })
           .catch((error) => {
             this.error = error;
-            console.log(error);
+            // console.log(error);
           });
       }
     });
   }
 
   editImage(image: Image): void {
-    // console.log('Edit image dialog opened', image);
+    const dialogRef = this.dialogHelper.openImageEditor({ image });
+    const closed =
+      'afterClosed' in dialogRef
+        ? dialogRef.afterClosed()
+        : dialogRef.afterDismissed();
 
-    const dialogRef = this.dialog.open(EditImageDialogComponent, {
-      width: '500px',
-      data: {
-        image: {
-          ...image,
-          tags: image.tags || null,
-        },
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((updatedImage) => {
+    closed.subscribe((updatedImage: any) => {
       if (updatedImage) {
         this.imageService
           .updateImage(updatedImage)

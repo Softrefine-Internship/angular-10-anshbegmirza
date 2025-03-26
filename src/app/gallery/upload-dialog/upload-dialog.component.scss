@@ -2,6 +2,19 @@ mat-dialog-content {
   overflow-x: hidden;
 }
 
+.dialog-container {
+  width: 800px;
+  max-width: 95vw;
+  padding: 24px;
+
+  &.bottom-sheet {
+    width: 100%;
+    padding: 16px;
+    max-height: 80vh;
+    overflow: auto;
+  }
+}
+
 .dialog-content {
   max-height: 70vh;
   overflow-y: hidden;
@@ -58,7 +71,7 @@ mat-dialog-content {
   height: 100%;
   color: #666;
   text-align: center;
-
+  margin: auto 0;
   mat-icon {
     font-size: 48px;
     width: 48px;
@@ -95,10 +108,6 @@ mat-dialog-content {
 .full-width {
   width: 100%;
 }
-
-// .progress-bar {
-//   margin-bottom: 1rem;
-// }
 
 /* Progress Bar Styling */
 .progress-container {
@@ -137,17 +146,23 @@ button[disabled] {
 
 /*Responsive design*/
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
+  .preview-container {
+    margin-bottom: 10px;
+  }
+  .hint-msg {
+    margin-bottom: 10px;
+  }
   .upload-container {
     display: block;
-    // flex-direction: column;
-    // gap: 16px;
+    height: max-content;
   }
-}
+  mat-dialog-actions {
+    margin-top: 5px;
+  }
 
-@media (max-width: 768px) {
   .progress-container {
-    padding: 8px;
+    // padding: 8px;
 
     .progress-info {
       flex-direction: column;

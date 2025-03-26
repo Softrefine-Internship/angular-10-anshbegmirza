@@ -1,4 +1,4 @@
-<div class="delete-dialog-container">
+<div class="delete-dialog-container" [class.bottom-sheet]="isBottomSheet">
   <div class="dialog-header">
     <mat-icon color="primary">delete</mat-icon>
     <h2 mat-dialog-title>Delete</h2>
@@ -7,10 +7,9 @@
   <mat-dialog-content>
     <p>Are you sure you would like to delete {{ data.message }}?</p>
   </mat-dialog-content>
-  <!-- <mat-icon color="warn" class="delete-icon">delete</mat-icon> -->
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-raised-button color="warn" [mat-dialog-close]="true">
+    <button mat-button mat-dialog-close (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="warn" (click)="onConfirm()" [mat-dialog-close]="true">
       Delete
     </button>
   </mat-dialog-actions>

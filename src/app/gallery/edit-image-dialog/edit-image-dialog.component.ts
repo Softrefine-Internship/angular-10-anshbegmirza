@@ -1,5 +1,18 @@
-import { Component, Inject, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  Inject,
+  ViewChild,
+  ElementRef,
+  Optional,
+} from '@angular/core';
+
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+import {
+  MAT_BOTTOM_SHEET_DATA,
+  MatBottomSheetRef,
+} from '@angular/material/bottom-sheet';
+
 import { Image } from 'src/app/shared/image.model';
 import { ImageService } from 'src/app/shared/image.service';
 
@@ -23,17 +36,29 @@ export class EditImageDialogComponent {
   selectedFile: File | null = null;
   base64Image: string | null = null;
 
+  isMobile: boolean = false;
+
+  data: { image: any };
+
   constructor(
-    public dialogRef: MatDialogRef<EditImageDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { image: Image | null },
+    @Optional() public dialogRef: MatDialogRef<EditImageDialogComponent>,
+    @Optional()
+    private bottomSheetRef: MatBottomSheetRef<EditImageDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) @Optional() dialogData: { image: Image | null },
+    @Inject(MAT_BOTTOM_SHEET_DATA)
+    @Optional()
+    bottomSheetData: { image: Image | null },
     private imageService: ImageService
   ) {
-    // Initialize data from image if editing
-    if (data.image) {
-      this.tags = data.image.tags ? [...data.image.tags] : [];
-      this.title = data.image.title || '';
-      this.description = data.image.description || '';
-      this.base64Image = data.image.url || null;
+    this.isMobile = !!bottomSheetRef;
+
+    this.data = dialogData || bottomSheetData || { image: null };
+
+    if (this.data?.image) {
+      this.tags = this.data.image.tags ? [...this.data.image.tags] : [];
+      this.title = this.data.image.title || '';
+      this.description = this.data.image.description || '';
+      this.base64Image = this.data.image.base64 || null;
     }
   }
 
@@ -60,6 +85,11 @@ export class EditImageDialogComponent {
       return;
     }
 
+    if (this.tags.length < 1) {
+      this.error = 'Please add atleast 1 tag.';
+      return;
+    }
+
     if (this.selectedFile && !this.base64Image) {
       this.error = 'Error processing image';
       return;
@@ -69,22 +99,32 @@ export class EditImageDialogComponent {
 
     try {
       const result = {
-        ...(this.data.image || {}),
+        ...(this.data?.image || {}),
         title: this.title,
         description: this.description,
         tags: this.tags,
         file: this.selectedFile,
         base64: this.base64Image,
-        // url: this.base64Image || this.data.image?.url,
       };
-      console.log(result);
-
-      this.dialogRef.close(result);
+      // console.log(result);
+      if (this.isMobile) {
+        this.bottomSheetRef.dismiss(result);
+      } else {
+        this.dialogRef.close(result);
+      }
     } catch (err) {
       this.error = 'Error saving changes';
       console.error(err);
     } finally {
       this.uploading = false;
+    }
+  }
+
+  close(): void {
+    if (this.isMobile) {
+      this.bottomSheetRef.dismiss();
+    } else {
+      this.dialogRef.close();
     }
   }
 

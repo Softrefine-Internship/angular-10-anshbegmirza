@@ -1,25 +1,30 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UploadDialogComponent } from '../gallery/upload-dialog/upload-dialog.component';
+
+import { DialogHelperService } from '../shared/dialog-helper.service';
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private dialogHelper: DialogHelperService
+  ) {}
 
   openUploadDialog() {
-    const dialogRef = this.dialog.open(UploadDialogComponent, {
-      width: '1000px',
-      height: 'max-content',
-      data: {},
-    });
+    const dialogRef = this.dialogHelper.openUploadDialog();
+    const closed =
+      'afterClosed' in dialogRef
+        ? dialogRef.afterClosed()
+        : dialogRef.afterDismissed();
 
     // handle dialog after result.
-    dialogRef.afterClosed().subscribe((result) => {
+    closed.subscribe((result) => {
       if (result) {
-        console.log('Dialog result:', result);
+        // console.log('Dialog result:', result);
       }
     });
   }

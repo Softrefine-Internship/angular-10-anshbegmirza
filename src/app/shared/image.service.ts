@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { Image } from './image.model';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
+
+import { Subject } from 'rxjs';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -9,6 +12,8 @@ export class ImageService {
   constructor(private db: AngularFireDatabase) {}
 
   error = null;
+
+  private loadedImages: any[] = [];
 
   convertToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -38,28 +43,23 @@ export class ImageService {
     return this.db.list('imagesCollection').valueChanges();
   }
 
-  // searching implementation using tags.
+  // fetches from db
   // searchImagesByTag(tag: string) {
   //   return this.db
-  //     .list('imagesCollection', (ref) =>
-  //       ref
-  //         .orderByChild('tags')
-
-  //         .equalTo(tag)
-  //     )
-  //     .valueChanges();
+  //     .list('imagesCollection')
+  //     .valueChanges()
+  //     .pipe(
+  //       map((images: any[]) =>
+  //         images.filter((image) => image.tags && image.tags.includes(tag))
+  //       )
+  //     );
   // }
 
-  searchImagesByTag(tag: string) {
-    return this.db
-      .list('imagesCollection')
-      .valueChanges()
-      .pipe(
-        map((images: any[]) =>
-          images.filter((image) => image.tags && image.tags.includes(tag))
-        )
-      );
-  }
+  // searchImagesByTag(tag: string) {
+  //   return this.loadedImages.filter(
+  //     (image) => image.tags && image.tags.includes(tag)
+  //   );
+  // }
 
   // delete image
   deleteImage(imageId: string): Promise<void> {

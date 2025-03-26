@@ -26,6 +26,12 @@
   align-items: center;
   gap: 8px;
   color: #f44336;
+  position: fixed;
+  font-size: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  // outline: 1px solid lime;
   mat-icon {
     font-size: 20px;
   }

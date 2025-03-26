@@ -1,7 +1,7 @@
 .delete-dialog-container {
-  padding: 24px;
+  padding: 12px;
   width: 350px;
-  // background-color: #d6d2cc;
+
   .dialog-header {
     display: flex;
     align-items: center;
@@ -33,7 +33,7 @@
     padding: 16px 0 0 0;
     margin: 5px auto;
     display: block;
-    // align-items: enter;
+
     button {
       margin-left: 8px;
     }
@@ -43,4 +43,11 @@
 .delete-icon {
   display: block;
   margin: 5px auto;
+}
+
+@media (max-width: 768px) {
+  .delete-dialog-container {
+    width: 90%;
+    padding: 16px;
+  }
 }

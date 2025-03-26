@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Upload Image</h2>
+<h2 mat-dialog-title *ngIf="!isBottomSheet">Upload Image</h2>
 <mat-dialog-content class="dialog-content">
   <div class="upload-container">
     <!-- Left side: Image preview with drag and drop -->
@@ -17,11 +17,8 @@
     <div class="form-container">
       <div class="file-input-container">
         <input type="file" (change)="onFileSelected($event)" accept="image/*" #fileInput style="display: none" />
-        <button mat-raised-button color="primary" (click)="fileInput.click()">
-          Choose Image
-        </button>
         <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
-        <small *ngIf="!selectedFile && formSubmitted" class="error-text">Image is required</small>
+        <small *ngIf="!selectedFile && formSubmitted" class="error-text">*Image is required</small>
       </div>
 
       <mat-form-field appearance="fill" class="full-width">
@@ -52,7 +49,7 @@
           </mat-chip>
           <input matInput [(ngModel)]="newTag" (keydown.enter)="addTag($event)" placeholder="Add tag" />
         </mat-chip-listbox>
-        <mat-hint>Press Enter to add a tag (minimum 1 required)</mat-hint>
+        <mat-hint class="hint-msg">Press Enter to add a tag (minimum 1 required)</mat-hint>
         <mat-error *ngIf="tags.length < 1 && (formSubmitted || tagsTouched)">
           At least 1 tag is required
         </mat-error>
@@ -73,8 +70,8 @@
     </div>
     <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
   </div>
-  <button mat-button (click)="onCancel()" [disabled]="uploading">Cancel</button>
-  <button mat-raised-button color="primary" (click)="onUpload()" [disabled]="uploading">
+  <button class="action-btns" mat-button (click)="onCancel()" [disabled]="uploading">Cancel</button>
+  <button class="action-btns" mat-raised-button color="primary" (click)="onUpload()" [disabled]="uploading">
     <span *ngIf="!uploading">Upload</span>
     <span *ngIf="uploading">Uploading...</span>
   </button>
